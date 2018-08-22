@@ -211,16 +211,11 @@ for frame = 1:num_frames
         if params.kalmanScaFilter
             currentScaleFactor_DP = currentScaleFactor+V_Scale+0.5*A_Scale;
             predictScaLocation  = predict(kalmanScaFilter);
-                detectedScaLocation = [currentScaleFactor_DP,0];
-                trackedScaLocation  = correct(kalmanScaFilter, detectedScaLocation);
-                drawCorrectPos(ii,3) = trackedScaLocation(1);
-            
-                currentScaleFactor = trackedScaLocation(1);  
-            
+            detectedScaLocation = [currentScaleFactor_DP,0];
+            trackedScaLocation  = correct(kalmanScaFilter, detectedScaLocation);
+            drawCorrectPos(ii,3) = trackedScaLocation(1);
+            currentScaleFactor = trackedScaLocation(1);  
             drawPredictPos(ii,3) = currentScaleFactor;
-        else if params.directMotionPredict
-                currentScaleFactor = currentScaleFactor+V_Scale+0.5*A_Scale;
-            end
         end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                 
             %create a new feature projection matrix
@@ -517,20 +512,10 @@ set(gca,'xdir','reverse');
 
 figure(9),
 h4 = plot3(drawCorrectPos(:,3),drawCorrectPos(:,1),drawCorrectPos(:,2),'y');
-legend('Actual position');
+legend('Correct position');
 rotate(h4,[1,0,0],180);
 set(gca,'xdir','reverse');
 
-% predictError = sum(abs(drawCorrectPos-drawActualPos))
-% CorrectError = sum(abs(drawPredictPos-drawActualPos))
-fid = fopen('F:\1研究生\研二\UAV_POS.txt','w');
-k = 1; [M,N] = size(drawCorrectPos);
-for k = 1:M;
-    fprintf(fid,'%-10g ',drawCorrectPos(k,:));
-    fprintf(fid,'\r\n');
-    k=k+1;
-end
-fclose(fid);
 
 fps = numel(s_frames) / time;
 
