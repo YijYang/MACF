@@ -5,11 +5,11 @@ close all;
 
 %choose the path to the videos (you'll be able to choose one with the GUI)
 base_path = '.\sequences\';
-%base_path = 'F:\1ÑĞ¾¿Éú\ÑĞ¶ş\Ä¿±ê¸ú×Ù\FDSST\tracker_benchmark_v1.0\Benchmark\';
+%base_path = 'F:\1ç ”ç©¶ç”Ÿ\ç ”äºŒ\ç›®æ ‡è·Ÿè¸ª\FDSST\tracker_benchmark_v1.0\Benchmark\';
 %Auto choose target%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %hfig = figure;
 %imshow(imread('C:\Users\yang\my_fDSST_code\sequences\UAV\img\img00001.jpg'));
-%set(hfig, 'position', 0.9*get(0,'ScreenSize')); %ÉèÖÃÏÔÊ¾ÆÁ´óĞ¡
+%set(hfig, 'position', 0.9*get(0,'ScreenSize')); %è®¾ç½®æ˜¾ç¤ºå±å¤§å°
 %h = imrect;
 %target=uint16(h.getPosition);
 %fid = fopen('C:\Users\yang\my_fDSST_code\sequences\UAV\dog1_gt.txt','w');
@@ -23,14 +23,14 @@ params.output_sigma_factor = 1/16;		% standard deviation for the desired transla
 params.scale_sigma_factor = 1/16;       % standard deviation for the desired scale filter output
 params.lambda = 2e-2;					% regularization weight (denoted "lambda" in the paper)
 params.interp_factor = 0.024;			% tracking model learning rate (denoted "eta" in the paper)
-params.num_compressed_dim = 18;         % Ñ¹ËõÌØÕ÷Î¬Êıthe dimensionality of the compressed features
-params.refinement_iterations = 1;       % ÓÃÓÚÏ¸»¯Ö¡ÖĞµÄ½á¹ûÎ»ÖÃµÄµü´ú´ÎÊınumber of iterations used to refine the resulting position in a frame
+params.num_compressed_dim = 18;         % å‹ç¼©ç‰¹å¾ç»´æ•°the dimensionality of the compressed features
+params.refinement_iterations = 1;       % ç”¨äºç»†åŒ–å¸§ä¸­çš„ç»“æœä½ç½®çš„è¿­ä»£æ¬¡æ•°number of iterations used to refine the resulting position in a frame
 params.translation_model_max_area = inf;% maximum area of the translation model
 params.interpolate_response = 1;        % interpolation method for the translation scores
 params.resize_factor = 1;               % initial resize
 
 params.number_of_scales = 17;           % number of scale levels
-params.number_of_interp_scales = 33;    % number of scale levels after interpolation£¨²åÖµ£©
+params.number_of_interp_scales = 33;    % number of scale levels after interpolationï¼ˆæ’å€¼ï¼‰
 params.scale_model_factor = 1.0;        % relative size of the scale sample
 params.scale_step = 1.03;               % Scale increment factor (denoted "a" in the paper)
 params.scale_model_max_area = 512;      % the maximum size of scale examples
@@ -68,7 +68,7 @@ if isempty(video_path), return, end  %user cancelled
 [img_files, pos, target_sz, ground_truth, video_path] = ...
 	load_video_info(video_path);
 
-params.init_pos = floor(pos([2 1])) + floor(target_sz([2 1])/2);%È¡Õûº¯Êı
+params.init_pos = floor(pos([2 1])) + floor(target_sz([2 1])/2);%å–æ•´å‡½æ•°
 params.wsize = floor(target_sz([2 1]));
 params.s_frames = img_files;
 params.video_path = video_path;
@@ -76,11 +76,11 @@ params.video_path = video_path;
 [results,prediction]= fDSST(params);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 positions = results.res;
-fps = results.fps
+fps = results.fps;
 
 % calculate precisions
-[distance_precision, PASCAL_precision, average_center_location_error] = ...
-    compute_performance_measures(positions, ground_truth);
-%fprintf('Speed: %.3g fps\n',fps);
-fprintf('Center Location Error: %.3g pixels\nDistance Precision: %.3g %%\nOverlap Precision: %.3g %%\nSpeed: %.3g fps\n', ...
-    average_center_location_error, 100*distance_precision, 100*PASCAL_precision, fps);
+% [distance_precision, PASCAL_precision, average_center_location_error] = ...
+%    compute_performance_measures(positions, ground_truth);
+fprintf('Speed: %.3g fps\n',fps);
+% fprintf('Center Location Error: %.3g pixels\nDistance Precision: %.3g %%\nOverlap Precision: %.3g %%\nSpeed: %.3g fps\n', ...
+%    average_center_location_error, 100*distance_precision, 100*PASCAL_precision, fps);
