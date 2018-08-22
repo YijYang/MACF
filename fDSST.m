@@ -122,7 +122,7 @@ rect_position = zeros(num_frames, 4);
 
 time = 0;
 
-for frame = 1:num_frames,
+for frame = 1:num_frames
     %load image
     im = imread(s_frames{frame});
     
@@ -147,7 +147,7 @@ for frame = 1:num_frames,
             xt = feature_projection(xt_npca, xt_pca, projection_matrix, cos_window);
             xtf = fft2(xt);
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %Î»ÖÃÂË²¨Æ÷ÏìÓ¦
+    %ä½ç½®æ»¤æ³¢å™¨å“åº”
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             responsef = sum(hf_num .* xtf, 3) ./ (hf_den + lambda);
             
@@ -170,32 +170,17 @@ for frame = 1:num_frames,
                 maxResp = max(max(Resp));
                 minResp = min(min(Resp));
                 Resp = Resp./maxResp;
-                % figure(20),
-             %mesh(Resp);
                 Resp = Resp.^2;
-                % figure(21),
-             %mesh(Resp);
                 maxResp = max(max(Resp));
                 minResp = min(min(Resp));
                 Resp = Resp./maxResp;
                 CSMR(i) = (maxResp - minResp)/(mean(mean(Resp - minResp)));
-                rs = CSMR(i)/CSMR(1)%,pause(1);
-                if rs > 0.6
+                tr = CSMR(i)/CSMR(1);
+                if tr > 0.6
                     interp_pos_factor = 0.024;
                 else
                     interp_pos_factor = 0.024*rs;
                 end                
-%                 if rs > 0.9
-%                     interp_factor = 0.024*rs;
-%                 elseif rs > 0.7
-%                     interp_factor = 0.018*rs;
-%                 elseif rs > 0.5
-%                     interp_factor = 0.010*rs;
-%                 elseif rs > 0.3
-%                     interp_factor = 0.005*rs;
-%                 else
-%                     interp_factor = 0.0001;
-%                 end
                 i = i+1;
             end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
@@ -225,7 +210,6 @@ for frame = 1:num_frames,
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         if params.kalmanScaFilter
             currentScaleFactor_DP = currentScaleFactor+V_Scale+0.5*A_Scale;
-            %predict(kalmanScaFilter);
             predictScaLocation  = predict(kalmanScaFilter);
                 detectedScaLocation = [currentScaleFactor_DP,0];
                 trackedScaLocation  = correct(kalmanScaFilter, detectedScaLocation);
@@ -245,7 +229,7 @@ for frame = 1:num_frames,
             xs = feature_projection_scale(xs_npca,xs_pca,scale_basis,scale_window);
             xsf = fft(xs,[],2);
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %³ß¶ÈÂË²¨Æ÷ÏìÓ¦
+    %å°ºåº¦æ»¤æ³¢å™¨å“åº”
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
             scale_responsef = sum(sf_num .* xsf, 1) ./ (sf_den + lambda);
             
@@ -256,26 +240,22 @@ for frame = 1:num_frames,
                 SmaxResp = max(SResp);
                 SminResp = min(SResp);
                 SResp = SResp./SmaxResp;
-%                 figure(22),plot(SResp);
                 SResp = SResp.^2;
-%                 figure(23),plot(SResp);
                 SmaxResp = max(SResp);
                 SminResp = min(SResp);
                 SCSMR(j) = (SmaxResp - SminResp)/(mean(SResp - SminResp));
-                srs = SCSMR(j)/SCSMR(1)
-                if srs > 0.75
+                str = SCSMR(j)/SCSMR(1);
+                if str > 0.75
                     interp_pos_factor = 0.024;
-                elseif srs >0.3
+                elseif str >0.3
                     interp_pos_factor = 0.024*srs;
                 else
                     interp_pos_factor = 0;
                 end                
                 j = 2;
             end
-%             interp_pos_factor = 0.4*interp_pos_factor + 0.6*interp_sca_factor;
-%             interp_sca_factor = interp_pos_factor;
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
             recovered_scale_index = find(interp_scale_response == max(interp_scale_response(:)), 1);
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             if params.directMotionPredict    
@@ -307,7 +287,7 @@ for frame = 1:num_frames,
         [xl_npca, xl_pca] = get_subwindow(im, pos, sz, currentScaleFactor);
     end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %¸üĞÂÎ»ÖÃÂË²¨Æ÷µÄ·Ö×Ó
+    %æ›´æ–°ä½ç½®æ»¤æ³¢å™¨çš„åˆ†å­
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if frame == 1
         h_num_pca = xl_pca;
@@ -316,7 +296,7 @@ for frame = 1:num_frames,
         % set number of compressed dimensions to maximum if too many
         num_compressed_dim = min(num_compressed_dim, size(xl_pca, 2));
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        %³õÊ¼»¯¿¨¶ûÂüÂË²¨Æ÷:Î»ÖÃÂË²¨
+        %åˆå§‹åŒ–å¡å°”æ›¼æ»¤æ³¢å™¨:ä½ç½®æ»¤æ³¢
     if params.kalmanPosFilter
         initialPosLocation = pos;
         kalmanPosFilter = configureKalmanFilter(params.motionPosModel, ...
@@ -326,7 +306,7 @@ for frame = 1:num_frames,
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     else
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        %¿¨¶ûÂüÂË²¨Æ÷Ô¤²â¡¢¸üĞÂ:Î»ÖÃÂË²¨
+        %å¡å°”æ›¼æ»¤æ³¢å™¨é¢„æµ‹ã€æ›´æ–°:ä½ç½®æ»¤æ³¢
     if params.kalmanPosFilter
         detectedPosLocation = pos; 
         trackedPosLocation  = correct(kalmanPosFilter, detectedPosLocation);
@@ -363,7 +343,7 @@ for frame = 1:num_frames,
     end
     
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %¸üĞÂÎ»ÖÃÂË²¨Æ÷µÄ·ÖÄ¸
+    %æ›´æ–°ä½ç½®æ»¤æ³¢å™¨çš„åˆ†æ¯
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     if frame == 1
         hf_den = new_hf_den;
@@ -383,12 +363,12 @@ for frame = 1:num_frames,
         %create a new feature projection matrix
         [xs_pca, xs_npca] = get_scale_subwindow(im, pos, base_target_sz, currentScaleFactor*scaleSizeFactors, scale_model_sz);
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %¸üĞÂ³ß¶ÈÂË²¨Æ÷µÄ·Ö×Ó
+    %æ›´æ–°å°ºåº¦æ»¤æ³¢å™¨çš„åˆ†å­
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if frame == 1
             s_num = xs_pca;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        %³õÊ¼»¯¿¨¶ûÂüÂË²¨Æ÷:³ß¶ÈÂË²¨
+        %åˆå§‹åŒ–å¡å°”æ›¼æ»¤æ³¢å™¨:å°ºåº¦æ»¤æ³¢
             if params.kalmanScaFilter
                 initialScaLocation = [currentScaleFactor,0];
                 kalmanScaFilter = configureKalmanFilter(params.motionScaModel, ...
@@ -397,17 +377,6 @@ for frame = 1:num_frames,
             end
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
         else
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-        %¿¨¶ûÂüÂË²¨Æ÷Ô¤²â¡¢¸üĞÂ:³ß¶ÈÂË²¨   
-%             if params.kalmanScaFilter
-%                 detectedScaLocation = [currentScaleFactor_DP,0];
-%                 %predict(kalmanScaFilter);predict(kalmanScaFilter);
-%                 %predictScaLocation  = predict(kalmanScaFilter);
-%                 trackedScaLocation  = correct(kalmanScaFilter, detectedScaLocation);
-%                 drawCorrectPos(ii,3) = trackedScaLocation(1);
-%                 %EstimateScaError = max(abs(detectedScaLocation-predictScaLocation));
-%             end 
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
             if params.kalmanScaFilter
                 if isUpdate
                     s_num = (1 - interp_sca_factor) * s_num + interp_sca_factor * xs_pca;
@@ -437,7 +406,7 @@ for frame = 1:num_frames,
         xsf = fft(xs,[],2);
         new_sf_den = sum(xsf .* conj(xsf),1);
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %¸üĞÂÎ»ÖÃÂË²¨Æ÷µÄ·Ö×Ó
+    %æ›´æ–°ä½ç½®æ»¤æ³¢å™¨çš„åˆ†å­
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         if frame == 1
             sf_den = new_sf_den;
@@ -459,21 +428,21 @@ for frame = 1:num_frames,
     
     time = time + toc();
     
-    %visualization(¿ÉÊÓ»¯)
+    %visualization(å¯è§†åŒ–)
     if visualization == 1
         rect_position_vis = [pos([2,1]) - target_sz([2,1])/2, target_sz([2,1])];
         if frame == 1
             hfig1 = figure;
             im_handle = imshow(im, 'Border','tight', 'InitialMag', 100 + 100 * (length(im) < 500));
-            set(hfig1, 'position', 0.8*get(0,'ScreenSize')); %ÉèÖÃÏÔÊ¾ÆÁ´óĞ¡
+            set(hfig1, 'position', 0.8*get(0,'ScreenSize')); %è®¾ç½®æ˜¾ç¤ºå±å¤§å°
             rect_handle = rectangle('Position',rect_position_vis, 'EdgeColor','b','LineWidth',3);
             text_handle = text(10, 10, ['#' int2str(frame)]);
             %rect_handle1 = rectangle('Position',temp.res(1,:), 'EdgeColor','r');
             %text_handle1 = text(temp.res(1,1), temp.res(1,2), 'SRDCF');
-            text_handle2 = text(rect_position_vis(1), rect_position_vis(2)-10, 'UAV');%ÏÔÊ¾UAV
+            text_handle2 = text(rect_position_vis(1), rect_position_vis(2)-10, 'UAV');%æ˜¾ç¤ºUAV
             set(text_handle, 'color', [1 1 0],'FontSize',20);
             set(text_handle2, 'color', [0 0 1]);
-            %saveas(gcf,['F:\1ÑĞ¾¿Éú\ÑĞÒ»\photo\Temp\2\1','.jpg']);%±£´æ±ê¶¨ºÃµÄÍ¼ÏñĞòÁĞ
+            %saveas(gcf,['F:\1ç ”ç©¶ç”Ÿ\ç ”ä¸€\photo\Temp\2\1','.jpg']);%ä¿å­˜æ ‡å®šå¥½çš„å›¾åƒåºåˆ—
         else
             try
                 set(im_handle, 'CData', im)
@@ -483,7 +452,7 @@ for frame = 1:num_frames,
                 %set(text_handle1, 'Position', [temp.res(frame,1), temp.res(frame,2)]);
                 set(text_handle2, 'Position', [rect_position_vis(1), rect_position_vis(2)-10]);
                 %i=i+1;
-                %saveas(gcf,['F:\1ÑĞ¾¿Éú\ÑĞÒ»\photo\Temp\2\',int2str(i),'.jpg']);
+                %saveas(gcf,['F:\1ç ”ç©¶ç”Ÿ\ç ”ä¸€\photo\Temp\2\',int2str(i),'.jpg']);
                 %pause(0.01);
             catch
                 return
@@ -554,7 +523,7 @@ set(gca,'xdir','reverse');
 
 % predictError = sum(abs(drawCorrectPos-drawActualPos))
 % CorrectError = sum(abs(drawPredictPos-drawActualPos))
-fid = fopen('F:\1ÑĞ¾¿Éú\ÑĞ¶ş\UAV_POS.txt','w');
+fid = fopen('F:\1ç ”ç©¶ç”Ÿ\ç ”äºŒ\UAV_POS.txt','w');
 k = 1; [M,N] = size(drawCorrectPos);
 for k = 1:M;
     fprintf(fid,'%-10g ',drawCorrectPos(k,:));
