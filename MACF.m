@@ -144,8 +144,7 @@ for frame = 1:num_frames
        
         %translation search
         while iter <= refinement_iterations && any(old_pos ~= pos)
-            [xt_npca, xt_pca] = get_subwindow(im, pos, sz, currentScaleFactor);
-            
+            [xt_npca, xt_pca] = get_subwindow(im, pos, sz, currentScaleFactor);            
             xt = feature_projection(xt_npca, xt_pca, projection_matrix, cos_window);
             xtf = fft2(xt);
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,10 +208,7 @@ for frame = 1:num_frames
                 V_Pos_Y_Old = V_Pos_Y;
                 V_Pos_Y = pos(1)-old_pos(1);
                 V_Pos_X_Old = V_Pos_X;
-                V_Pos_X = pos(2)-old_pos(2);
-                
-                drawActualPos(ii,2:-1:1) = pos;
-
+                V_Pos_X = pos(2)-old_pos(2);    
                 if frame > 2
                     A_Pos_Y = V_Pos_Y - V_Pos_Y_Old;
                     A_Pos_X = V_Pos_X - V_Pos_X_Old;
