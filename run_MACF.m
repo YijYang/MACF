@@ -73,7 +73,7 @@ params.wsize = floor(target_sz([2 1]));
 params.s_frames = img_files;
 params.video_path = video_path;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[results,prediction]= fDSST(params);
+[results,prediction]= MACF(params);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 positions = results.res;
 fps = results.fps;
