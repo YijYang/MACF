@@ -3,6 +3,8 @@ function [results,drawCorrectPos] = MOSSEtracker(params)
 ii = 1;
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 V_Scale = 0;A_Scale = 0;V_Scale_Old = 0;
+V_Pos_Y = 0;A_Pos_Y = 0;V_Pos_Y_Old = 0;
+V_Pos_X = 0;A_Pos_X = 0;V_Pos_X_Old = 0;
 predictScaLocation = 1.0;
 trackedScaLocation = [1.0, 0];
 i=1;j=1;
@@ -201,7 +203,22 @@ for frame = 1:num_frames
             pos = pos + translation_vec;
             
             drawActualPos(ii,2:-1:1) = pos; 
-            
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %calculate the speed of target in plane between current frame with pre frame
+            if params.directMotionPredict    
+                V_Pos_Y_Old = V_Pos_Y;
+                V_Pos_Y = pos(1)-old_pos(1);
+                V_Pos_X_Old = V_Pos_X;
+                V_Pos_X = pos(2)-old_pos(2);
+                
+                drawActualPos(ii,2:-1:1) = pos;
+
+                if frame > 2
+                    A_Pos_Y = V_Pos_Y - V_Pos_Y_Old;
+                    A_Pos_X = V_Pos_X - V_Pos_X_Old;
+                end
+            end
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%            
             iter = iter + 1;
         end
         
