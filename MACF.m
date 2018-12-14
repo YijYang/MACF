@@ -180,7 +180,7 @@ for frame = 1:num_frames
                 if tr > 0.6
                     interp_pos_factor = 0.024;
                 else
-                    interp_pos_factor = 0.024*rs;
+                    interp_pos_factor = 0.024*tr;
                 end                
                 i = i+1;
             end
@@ -256,7 +256,7 @@ for frame = 1:num_frames
                 if str > 0.75
                     interp_pos_factor = 0.024;
                 elseif str >0.3
-                    interp_pos_factor = 0.024*srs;
+                    interp_pos_factor = 0.024*str;
                 else
                     interp_pos_factor = 0;
                 end                
